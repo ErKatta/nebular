@@ -230,6 +230,10 @@ export class NbCalendarComponent<D> {
   @Input() visibleDate: D;
 
   /**
+   * Determines should we show calendars navigation or not.
+   * */
+  @Input() showNavigation: boolean = true;
+  /**
    * Determines should we show calendars header or not.
    * */
   @Input() showHeader: boolean = true;

@@ -11,7 +11,7 @@ import { NbDateService } from '@nebular/theme';
 
 import * as _moment from 'moment';
 // @ts-ignore
-import { default as _rollupMoment, Moment } from 'moment';
+import { default as _rollupMoment, LongDateFormatKey, Moment } from 'moment';
 
 const moment = _rollupMoment || _moment;
 
@@ -25,6 +25,7 @@ export class NbMomentDateService extends NbDateService<Moment> {
     days: { [key: string]: string[] },
   };
 
+  protected readonly TIME_ONLY_FORMAT_KEY: LongDateFormatKey = 'LT';
   constructor(@Inject(LOCALE_ID) locale: string) {
     super();
     this.setLocale(locale);
@@ -51,6 +52,10 @@ export class NbMomentDateService extends NbDateService<Moment> {
     return date.clone().locale(this.locale);
   }
 
+  valueOf(date: Moment): number {
+    return date.valueOf();
+  }
+
   compareDates(date1: Moment, date2: Moment): number {
     return this.getYear(date1) - this.getYear(date2) ||
       this.getMonth(date1) - this.getMonth(date2) ||
@@ -67,6 +72,10 @@ export class NbMomentDateService extends NbDateService<Moment> {
     }
 
     return '';
+  }
+
+  getLocaleTimeFormat(): string {
+    return moment.localeData().longDateFormat(this.TIME_ONLY_FORMAT_KEY);
   }
 
   getDate(date: Moment): number {
@@ -87,6 +96,22 @@ export class NbMomentDateService extends NbDateService<Moment> {
 
   getMonth(date: Moment): number {
     return this.clone(date).month();
+  }
+
+  getHours(date: Moment): number {
+    return date.hour();
+  }
+
+  getMinutes(date: Moment): number {
+    return date.minute();
+  }
+
+  getSeconds(date: Moment): number {
+    return date.second();
+  }
+
+  getMilliseconds(date: Moment): number {
+    return date.milliseconds();
   }
 
   getMonthEnd(date: Moment): Moment {
@@ -170,5 +195,45 @@ export class NbMomentDateService extends NbDateService<Moment> {
 
   getWeekNumber(date: Moment): number {
     return date.week();
+  }
+
+
+  setHours(date: Moment, hour: number): Moment {
+    return this.clone(date).set({ hour });
+  }
+
+  setMinutes(date: Moment, minute: number): Moment {
+    return this.clone(date).set({ minute });
+  }
+
+  setSeconds(date: Moment, second: number): Moment {
+    return this.clone(date).set({ second });
+  }
+
+  setMilliseconds(date: Moment, milliseconds: number): Moment {
+    return this.clone(date).set({ milliseconds });
+  }
+
+
+  addMinutes(date: Moment, minute: number): Moment {
+    return this.clone(date).add( { minute });
+  }
+
+  addHours(date: Moment, hour: number): Moment {
+    return this.clone(date).add( { hour });
+  }
+
+
+  getDateFormat(): string {
+    return 'YYYY-MM-DD';
+  }
+
+  getTwelveHoursFormat(): string {
+    return 'hh:mm A';
+  }
+
+
+  isValidTimeString(date: string, format: string): boolean {
+    return moment(date, format, true).isValid();
   }
 }

@@ -5,6 +5,7 @@
  */
 
 import { Inject, Injectable, LOCALE_ID } from '@angular/core';
+import { FormatWidth, getLocaleTimeFormat } from '@angular/common';
 import {
   DatePipe,
   FormStyle,
@@ -43,6 +44,10 @@ export class NbNativeDateService extends NbDateService<Date> {
     return new Date();
   }
 
+  getLocaleTimeFormat(): string {
+    return getLocaleTimeFormat(this.locale, FormatWidth.Short);
+  }
+
   getDate(date: Date): number {
     return date.getDate();
   }
@@ -57,6 +62,22 @@ export class NbNativeDateService extends NbDateService<Date> {
 
   getDayOfWeek(date: Date): number {
     return date.getDay();
+  }
+
+  getHours(date: Date): number {
+    return date.getHours();
+  }
+
+  getMinutes(date: Date): number {
+    return date.getMinutes();
+  }
+
+  getSeconds(date: Date): number {
+    return date.getSeconds();
+  }
+
+  getMilliseconds(date: Date): number {
+    return date.getMilliseconds();
   }
 
   /**
@@ -90,7 +111,12 @@ export class NbNativeDateService extends NbDateService<Date> {
   parse(date: string, format: string): Date {
     return new Date(Date.parse(date));
   }
+  addHours(date: Date, hour: number): Date {
+    const result: Date = new Date(date);
+    result.setHours(date.getHours() + hour);
 
+    return result;
+  }
   addDay(date: Date, num: number): Date {
     return this.createDate(date.getFullYear(), date.getMonth(), date.getDate() + num);
   }
@@ -167,4 +193,58 @@ export class NbNativeDateService extends NbDateService<Date> {
   getWeekNumber(date: Date): number {
     return parseInt(this.datePipe.transform(date, 'w'), 10);
   }
+
+  addMinutes(date: Date, minute: number): Date {
+    const result: Date = new Date(date);
+    result.setMinutes(date.getMinutes() + minute);
+
+    return result;
+  }
+
+  getDateFormat(): string {
+    return 'yyyy-MM-dd';
+  }
+
+  getTwelveHoursFormat(): string {
+    return 'hh:mm a';
+  }
+
+  isValidTimeString(date: string, format: string): boolean {
+    return this.isValidDateString(date, format);
+  }
+
+  valueOf(date: Date): number {
+    return date.valueOf();
+  }
+
+  setHours(date: Date, hour: number): Date {
+    const result: Date = this.clone(date);
+    result.setHours(hour);
+
+    return result;
+  }
+
+  setMinutes(date: Date, minute: number): Date {
+    const result: Date = this.clone(date);
+    result.setMinutes(minute);
+
+    return result;
+  }
+
+  setSeconds(date: Date, second: number): Date {
+    const result: Date = this.clone(date);
+    result.setSeconds(second);
+
+    return result;
+  }
+
+  setMilliseconds(date: Date, second: number): Date {
+    const result: Date = this.clone(date);
+    result.setMilliseconds(second);
+
+    return result;
+  }
+
+
+
 }

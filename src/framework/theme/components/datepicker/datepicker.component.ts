@@ -21,7 +21,7 @@ import {
   SimpleChanges,
   Optional,
 } from '@angular/core';
-import { takeWhile } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 
 import { NbComponentPortal, NbOverlayRef } from '../cdk/overlay/mapping';
@@ -41,18 +41,18 @@ import {
   NbCalendarCell,
   NbCalendarSize,
   NbCalendarViewMode,
+  NbCalendarSizeValues,
+  NbCalendarViewModeValues,
 } from '../calendar-kit/model';
 import { NbDateService } from '../calendar-kit/services/date.service';
 import { NB_DATE_SERVICE_OPTIONS, NbDatepicker, NbPickerValidatorConfig } from './datepicker.directive';
-import { convertToBoolProperty } from '../helpers';
+import { convertToBoolProperty, NbBooleanInput } from '../helpers';
 
 
 /**
  * The `NbBasePicker` component concentrates overlay manipulation logic.
  * */
-export abstract class NbBasePicker<D, T, P>
-                extends NbDatepicker<T>
-                implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export abstract class NbBasePicker<D, T, P> extends NbDatepicker<T> {
   /**
    * Datepicker date format. Can be used only with date adapters (moment, date-fns) since native date
    * object doesn't support formatting.
@@ -118,10 +118,10 @@ export abstract class NbBasePicker<D, T, P>
   abstract hideOnSelect: boolean;
 
   /**
-   * Determines should we show calendars header or not.
+   * Determines should we show calendar navigation or not.
    * @type {boolean}
    */
-  abstract showHeader: boolean;
+  abstract showNavigation: boolean;
 
   /**
    * Sets symbol used as a header for week numbers column
@@ -177,7 +177,9 @@ export abstract class NbBasePicker<D, T, P>
    * */
   protected pickerRef: ComponentRef<any>;
 
-  protected alive: boolean = true;
+  protected overlayOffset = 8;
+
+  protected destroy$ = new Subject<void>();
 
   /**
    * Queue contains the last value that was applied to the picker when it was hidden.
@@ -227,34 +229,6 @@ export abstract class NbBasePicker<D, T, P>
   }
 
   protected abstract get pickerValueChange(): Observable<T>;
-
-  ngOnInit() {
-    this.checkFormat();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.format && !changes.format.isFirstChange()) {
-      this.checkFormat();
-    }
-  }
-
-  ngAfterViewInit() {
-    this.init$.next();
-  }
-
-  ngOnDestroy() {
-    this.alive = false;
-    this.hide();
-    this.init$.complete();
-
-    if (this.ref) {
-      this.ref.dispose();
-    }
-
-    if (this.triggerStrategy) {
-      this.triggerStrategy.destroy();
-    }
-  }
 
   /**
    * Datepicker knows nothing about host html input element.
@@ -312,18 +286,20 @@ export abstract class NbBasePicker<D, T, P>
     this.subscribeOnValueChange();
     this.writeQueue();
     this.patchWithInputs();
+    this.pickerRef.changeDetectorRef.markForCheck();
   }
 
   protected createPositionStrategy(): NbAdjustableConnectedPositionStrategy {
     return this.positionBuilder
       .connectedTo(this.hostRef)
       .position(NbPosition.BOTTOM)
+      .offset(this.overlayOffset)
       .adjustment(NbAdjustment.COUNTERCLOCKWISE);
   }
 
   protected subscribeOnPositionChange() {
     this.positionStrategy.positionChange
-      .pipe(takeWhile(() => this.alive))
+      .pipe(takeUntil(this.destroy$))
       .subscribe((position: NbPosition) => patch(this.container, { position }));
   }
 
@@ -364,10 +340,10 @@ export abstract class NbBasePicker<D, T, P>
     this.picker.max = this.max;
     this.picker.filter = this.filter;
     this.picker._cellComponent = this.dayCellComponent;
-    this.picker.monthCellComponent = this.monthCellComponent;
+    this.picker._monthCellComponent = this.monthCellComponent;
     this.picker._yearCellComponent = this.yearCellComponent;
     this.picker.size = this.size;
-    this.picker.showHeader = this.showHeader;
+    this.picker.showNavigation = this.showNavigation;
     this.picker.visibleDate = this.visibleDate;
     this.picker.showWeekNumber = this.showWeekNumber;
     this.picker.weekNumberSymbol = this.weekNumberSymbol;
@@ -391,7 +367,8 @@ export abstract class NbBasePicker<D, T, P>
 @Component({
   template: '',
 })
-export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P> {
+export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P>
+                                            implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   /**
    * Datepicker date format. Can be used only with date adapters (moment, date-fns) since native date
@@ -409,6 +386,7 @@ export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P> {
    * Defines starting view for calendar.
    * */
   @Input() startView: NbCalendarViewMode = NbCalendarViewMode.DATE;
+  static ngAcceptInputType_startView: NbCalendarViewModeValues = NbCalendarViewMode.YEAR;
 
   /**
    * Minimum available date for selection.
@@ -445,6 +423,7 @@ export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P> {
    * Can be 'medium' which is default or 'large'.
    * */
   @Input() size: NbCalendarSize = NbCalendarSize.MEDIUM;
+  static ngAcceptInputType_size: NbCalendarSizeValues = NbCalendarSize.MEDIUM;
 
   /**
    * Depending on this date a particular month is selected in the calendar
@@ -458,10 +437,10 @@ export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P> {
   @Input() hideOnSelect: boolean = true;
 
   /**
-   * Determines should we show calendars header or not.
+   * Determines should we show calendars navigation or not.
    * @type {boolean}
    */
-  @Input() showHeader: boolean = true;
+  @Input() showNavigation: boolean = true;
 
   /**
    * Sets symbol used as a header for week numbers column
@@ -480,6 +459,7 @@ export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P> {
     this._showWeekNumber = convertToBoolProperty(value);
   }
   protected _showWeekNumber: boolean = false;
+  static ngAcceptInputType_showWeekNumber: NbBooleanInput = false;
 
   constructor(@Inject(NB_DOCUMENT) document,
               positionBuilder: NbPositionBuilderService,
@@ -492,13 +472,42 @@ export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P> {
     super(overlay, positionBuilder, triggerStrategyBuilder, cfr, dateService, dateServiceOptions);
   }
 
+  ngOnInit() {
+    this.checkFormat();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.format && !changes.format.isFirstChange()) {
+      this.checkFormat();
+    }
+  }
+
+  ngAfterViewInit() {
+    this.init$.next();
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.hide();
+    this.init$.complete();
+
+    if (this.ref) {
+      this.ref.dispose();
+    }
+
+    if (this.triggerStrategy) {
+      this.triggerStrategy.destroy();
+    }
+  }
+
   protected pickerClass: Type<P>;
 
   protected get pickerValueChange(): Observable<T> {
     return
   }
 
-  get value(): T | undefined {
+  get value(): T {
     return undefined;
   }
   set value(value: T) {}
@@ -532,7 +541,7 @@ export class NbDatepickerComponent<D> extends NbBasePickerComponent<D, D, NbCale
     return this.valueChange as EventEmitter<D>;
   }
 
-  get value(): D | undefined {
+  get value(): D {
     return this.picker ? this.picker.date : undefined;
   }
 
@@ -588,7 +597,7 @@ export class NbRangepickerComponent<D>
     return this.valueChange as EventEmitter<NbCalendarRange<D>>;
   }
 
-  get value(): NbCalendarRange<D> | undefined {
+  get value(): NbCalendarRange<D> {
     return this.picker ? this.picker.range : undefined;
   }
 

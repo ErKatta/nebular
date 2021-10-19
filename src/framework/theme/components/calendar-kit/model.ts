@@ -10,12 +10,15 @@ export interface NbCalendarDay {
   name: string;
   isHoliday: boolean;
 }
-
+export type NbCalendarViewModeValues = 'year' | 'month' | 'date';
 export enum NbCalendarViewMode {
   YEAR = 'year',
   MONTH = 'month',
   DATE = 'date',
 }
+
+export type NbCalendarSizeValues = 'medium' | 'large';
+
 
 export enum NbCalendarSize {
   MEDIUM = 'medium',
