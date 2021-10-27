@@ -16,7 +16,7 @@ export class MenuAutoCollapseComponent {
 
   items = [
     {
-      title: 'Profile',
+      title: 'Profile_3',
       expanded: true,
       children: [
         {

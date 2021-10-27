@@ -29,7 +29,7 @@ import { NbCalendarPickerRowComponent } from './components/calendar-picker/calen
 import { NbCalendarYearCellComponent } from './components/calendar-year-picker/calendar-year-cell.component';
 import { NbCalendarYearPickerComponent } from './components/calendar-year-picker/calendar-year-picker.component';
 import { NbCalendarWeekNumberComponent } from './components/calendar-week-number/nb-calendar-week-number.component';
-
+import { NbCalendarActionsComponent } from './components/calendar-actions/calendar-actions.component';
 import { NbNativeDateService } from './services/native-date.service';
 
 
@@ -48,6 +48,7 @@ const COMPONENTS = [
   NbCalendarMonthPickerComponent,
   NbCalendarDayPickerComponent,
   NbCalendarDayCellComponent,
+  NbCalendarActionsComponent,
   NbCalendarMonthCellComponent,
   NbCalendarYearCellComponent,
   NbCalendarPickerRowComponent,

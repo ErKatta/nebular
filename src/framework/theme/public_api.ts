@@ -35,6 +35,7 @@ export * from './components/calendar/calendar-range.component';
 // tslint:disable:max-line-length
 export { NbCalendarHeaderComponent } from './components/calendar-kit/components/calendar-header/calendar-header.component';
 export { NbCalendarDayCellComponent } from './components/calendar-kit/components/calendar-day-picker/calendar-day-cell.component';
+export { NbDateTimePickerComponent } from './components/datepicker/date-timepicker.component';
 export {
   NbCalendarYearPickerComponent,
   YEARS_IN_VIEW,
@@ -76,6 +77,7 @@ export * from './components/sidebar/sidebar.component';
 export * from './components/tabset/tabset.module';
 export * from './components/tabset/tabset.component';
 export * from './components/user/user.module';
+export * from './components/datepicker/date-timepicker.component';
 export * from './components/user/user.component';
 export * from './components/actions/actions.module';
 export * from './components/actions/actions.component';
@@ -180,6 +182,10 @@ export * from './components/datepicker/datepicker-container.component';
 export * from './components/datepicker/datepicker.component';
 export * from './components/dialog/dialog-container';
 export * from './components/radio/radio.module';
+export * from './components/timepicker/timepicker.module';
+export * from './components/timepicker/model';
+export * from './components/timepicker/timepicker.component';
+export * from './components/timepicker/timepicker.directive';
 export * from './components/radio/radio-group.component';
 export * from './components/radio/radio.component';
 export * from './components/tree-grid/tree-grid.module';
