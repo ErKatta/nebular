@@ -50,7 +50,7 @@ import { emptyStatusWarning } from '../helpers';
 @Component({
   selector: 'nb-spinner',
   template: `
-    <span *nbPortal class="spin-circle"></span>
+    <span class="spin-circle"></span>
     <span class="message" *ngIf="message">{{ message }}</span>
   `,
   styleUrls: ['./spinner.component.scss'],

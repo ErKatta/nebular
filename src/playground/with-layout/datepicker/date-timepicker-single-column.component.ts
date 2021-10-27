@@ -16,6 +16,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         <nb-date-timepicker
           #dateTimePicker
           singleColumn
+          [hoursText]="'Ore'"
+          [showHeader]= false
           [step]="10"></nb-date-timepicker>
       </nb-card-body>
     </nb-card>

@@ -33,6 +33,7 @@ import { NbTimePickerComponent } from '../timepicker/timepicker.component';
           [size]="size"
           [visibleDate]="visibleDate"
           [showNavigation]="showNavigation"
+          [showHeader]="showHeader"
           [showWeekNumber]="showWeekNumber"
           [weekNumberSymbol]="weekNumberSymbol"
           (dateChange)="onDateValueChange($event)">
@@ -41,7 +42,9 @@ import { NbTimePickerComponent } from '../timepicker/timepicker.component';
              [class.size-large]="isLarge()"
              [class.timepicker-single-column-width]="singleColumn"
              [class.timepicker-multiple-column-width]="!singleColumn">
-          <div class="picker-title">{{ title }}</div>
+         <!--<div class="picker-title">{{ title }}</div>
+         Custom-IBAF-change:removed timepicker header inside calendar with time
+        -->
           <nb-timepicker
             (onSelectTime)="onTimeChange($event)"
             [date]="date"
@@ -49,7 +52,9 @@ import { NbTimePickerComponent } from '../timepicker/timepicker.component';
             [withSeconds]="showSeconds()"
             [showFooter]="false"
             [singleColumn]="singleColumn"
-            [step]="step">
+            [step]="step"
+            [hoursText]="hoursText"
+            >
           </nb-timepicker>
           <ng-container nbPortalOutlet></ng-container>
         </div>
@@ -88,6 +93,11 @@ export class NbCalendarWithTimeComponent<D> extends NbCalendarComponent<D> imple
    * Show timepicker values in one column with 60 minutes step by default.
    * */
   @Input() singleColumn: boolean;
+
+  /**
+   * Hours text on column header
+   */
+  @Input() hoursText = 'Hr';
 
   /**
    * Defines minutes step when we use fill time format.

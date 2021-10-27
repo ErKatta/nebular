@@ -52,6 +52,8 @@ export class NbDateTimePickerComponent<D> extends NbBasePickerComponent<D, D, Nb
   @Input() title: string;
   @Input() applyButtonText: string;
   @Input() currentTimeButtonText: string;
+  @Input() showHeader: boolean ;
+  @Input() hoursText = 'Hr';
 
   @Input()
   get twelveHoursFormat(): boolean {
@@ -83,6 +85,8 @@ export class NbDateTimePickerComponent<D> extends NbBasePickerComponent<D, D, Nb
   _singleColumn: boolean;
   static ngAcceptInputType_singleColumn: NbBooleanInput = true;
 
+
+
   constructor(@Inject(NB_DOCUMENT) document,
               positionBuilder: NbPositionBuilderService,
               triggerStrategyBuilder: NbTriggerStrategyBuilderService,
@@ -106,6 +110,9 @@ export class NbDateTimePickerComponent<D> extends NbBasePickerComponent<D, D, Nb
     this.picker.title = this.title;
     this.picker.applyButtonText = this.applyButtonText;
     this.picker.currentTimeButtonText = this.currentTimeButtonText;
+    this.picker.showHeader = this.showHeader;
+    this.picker.hoursText = this.hoursText;
+
 
     if (this.twelveHoursFormat) {
       this.picker.timeFormat = this.dateService.getTwelveHoursFormat();

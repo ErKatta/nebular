@@ -123,6 +123,13 @@ export abstract class NbBasePicker<D, T, P> extends NbDatepicker<T> {
    */
   abstract showNavigation: boolean;
 
+ /**
+   * Determines should we show calendar header or not.
+   * @type {boolean}
+   */
+  abstract showHeader: boolean;
+
+
   /**
    * Sets symbol used as a header for week numbers column
    * */
@@ -344,6 +351,7 @@ export abstract class NbBasePicker<D, T, P> extends NbDatepicker<T> {
     this.picker._yearCellComponent = this.yearCellComponent;
     this.picker.size = this.size;
     this.picker.showNavigation = this.showNavigation;
+    this.picker.showHeader = this.showHeader;
     this.picker.visibleDate = this.visibleDate;
     this.picker.showWeekNumber = this.showWeekNumber;
     this.picker.weekNumberSymbol = this.weekNumberSymbol;
@@ -441,6 +449,13 @@ export class NbBasePickerComponent<D, T, P> extends NbBasePicker<D, T, P>
    * @type {boolean}
    */
   @Input() showNavigation: boolean = true;
+
+ /**
+   * Determines should we show calendar header or not.
+   * @type {boolean}
+   */
+  @Input() showHeader: boolean = true;
+
 
   /**
    * Sets symbol used as a header for week numbers column
